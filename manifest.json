@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "مساعد اشتراكات يوتيوب - YouTube Subscriptions Hub",
-  "version": "2.2.1",
-  "description": "تصدير واستيراد والاشتراك في قنوات يوتيوب بسهولة ومطابقة القنوات المشتركة.",
+  "name": "YouTube Subscriptions Transfer",
+  "version": "1.0.0",
+  "description": "Export YouTube subscriptions to CSV and transfer or batch-subscribe them into another account.",
   "permissions": [
     "storage",
     "activeTab",
@@ -18,7 +18,7 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_title": "مساعد اشتراكات يوتيوب"
+    "default_title": "YouTube Subscriptions Transfer"
   },
   "icons": {
     "16": "icons/icon16.png",

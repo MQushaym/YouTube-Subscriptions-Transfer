@@ -1,109 +1,64 @@
-<div align="center">
+# YouTube Subscriptions Transfer
 
-# 🚀 مساعد اشتراكات يوتيوب | YouTube Subscriptions Hub
+A lightweight browser extension for Google Chrome and Microsoft Edge to export your YouTube subscriptions to CSV and transfer or batch-subscribe to them from another account.
 
-**إضافة متصفح مفتوحة المصدر لتصدير واستيراد والاشتراك التلقائي في قنوات يوتيوب ومطابقة الاهتمامات المشتركة بين الأصدقاء.**
+## Overview
 
-[![Manifest V3](https://img.shields.io/badge/Manifest-V3-success?style=flat-square)](https://developer.chrome.com/docs/extensions/mv3/intro/)
-[![Chrome](https://img.shields.io/badge/Google_Chrome-Supported-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://www.google.com/chrome/)
-[![Edge](https://img.shields.io/badge/Microsoft_Edge-Supported-0078D7?style=flat-square&logo=microsoftedge&logoColor=white)](https://www.microsoft.com/edge)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+YouTube does not provide an option to export or share subscribed channels between accounts. This extension provides a simple two-step workflow:
 
-</div>
+1. **Export:** Scrapes your subscriptions from `youtube.com/feed/channels` and downloads a structured CSV file containing channel names, URLs, handles, and channel IDs.
+2. **Import & Subscribe:** Allows another account to upload that CSV file, automatically identifies existing mutual subscriptions, and allows one-click or batch subscription to the remaining channels without opening separate tabs.
 
----
+## Features
 
-## 📖 نظرة عامة (Overview)
+- **Full Export to CSV:** Automatically scrolls through your subscriptions page and exports all channels to a UTF-8 CSV file with BOM support (compatible with Excel and Google Sheets).
+- **Active Account Detection:** Identifies the active account in your open YouTube tab to ensure accurate matching.
+- **Mutual Subscription Filtering:** Compares the uploaded file against your current subscriptions in real time, separating channels you already follow from new ones.
+- **Sequential Batch Subscription:** Subscribes to all remaining channels automatically in the background with a delay between requests to maintain session stability.
+- **Individual Subscription Control:** Review channels in a clean list and subscribe or skip individually.
+- **Diagnostics & Activity Log:** Built-in live log showing session indices, HTTP response codes, and subscription status, with a one-click copy button for troubleshooting.
+- **Privacy-Focused:** Runs 100% locally in your browser. No third-party servers, tracking, or data collection.
 
-هل أردت يوماً مشاركة قائمة القنوات التي تتابعها على يوتيوب مع صديق أو زميل بحيث يستطيع استعراضها والاشتراك فيها بسهولة دون فتح عشرات التبويبات يدوياً؟
+## Installation
 
-**YouTube Subscriptions Hub** هي إضافة متصفح خفيفة وسريعة مصممة خصيصاً لهذه المهمة:
-1. **تصدير شامل:** يسحب جميع القنوات التي تتابعها ويصدرها إلى ملف CSV أنيق بضغطة زر.
-2. **استيراد تفاعلي وذكي:** يرفع صديقك الملف، فتقوم الإضافة بفحص حسابه النشط لحظياً وعزل القنوات المشتركة بينكما مسبقاً، لتعرض له القنوات الجديدة فقط.
-3. **اشتراك تلقائي وفردي:** إمكانية الاشتراك في قناة معينة بنقرة واحدة، أو الضغط على زر الاشتراك التلقائي في كافة القنوات المتبقية بالتتابع في الخلفية!
-
----
-
-## ✨ المميزات الرئيسية (Key Features)
-
-- 📥 **تصدير القنوات بنقرة واحدة:**
-  - تمرير آلي ذكي لجمع كل القنوات مهما كان عددها.
-  - استخراج كامل لـ (اسم القناة، الرابط، معرف القناة `Channel ID`، المعرف `@Handle`، عدد المشتركين، والنبذة).
-  - ملف CSV مهيأ بترميز UTF-8 مع BOM ليدعم اللغة العربية في برامج Excel و Google Sheets بدون مشاكل تشفير.
-
-- 📤 **استيراد ومطابقة الاشتراكات في الوقت الفعلي:**
-  - واجهة مبسطة ونظيفة تركز على 3 مؤشرات أساسية: (الإجمالي | مشتركة مسبقاً | متبقية للاشتراك).
-  - كشف ذكي للحساب المفتوح وتجنب تكرار القنوات المشترك بها بالفعل.
-
-- ⚡ **الاشتراك التلقائي الذكي (Auto-Subscribe):**
-  - زر اشتراك جماعي يمر على القنوات الجديدة فقط في الخلفية.
-  - فاصل زمني طبيعي بين الاشتراكات مع شريط تقدم ونسبة إنجاز وإمكانية الإيقاف المؤقت.
-
-- 📋 **نظام السجل والمراقبة المباشر (Live Diagnostics & Logger):**
-  - نافذة سجل فورية تسجل كل حدث تقني (اسم الحساب، معرف الجلسة، رموز استجابة يوتيوب HTTP).
-  - زر نسخ فوري للسجل بنقرة واحدة لتسهيل المتابعة والدعم الفني.
-
-- 🔒 **أمان وخصوصية 100%:**
-  - تعمل محلياً بالكامل داخل متصفحك (Client-side Only).
-  - لا توجد أي خوادم خارجية أو جمع للبيانات أو تتبع.
-
----
-
-## 🛠️ التثبيت (Installation)
-
-### لمتصفحي Google Chrome و Microsoft Edge:
-
-1. حمّل هذا المجلد أو استنسخ المستودع (Clone):
+1. Clone or download this repository:
    ```bash
-   git clone https://github.com/USERNAME/youtube-subscriptions-hub.git
+   git clone https://github.com/<username>/youtube-subscriptions-transfer.git
    ```
-2. افتح صفحة الإضافات في متصفحك:
-   - لمتصفح كروم: `chrome://extensions`
-   - لمتصفح إيدج: `edge://extensions`
-3. فعّل **وضع مطور البرامج (Developer Mode)** من الزاوية العلوية.
-4. اضغط على زر **تحميل إضافة تم فك حزمتها (Load unpacked)**.
-5. حدد مجلد الإضافة `youtube-channel-exporter` (أو المجلد المستنسخ).
-6. ستظهر أيقونة الإضافة فوراً في شريط الأدوات بالمتصفح!
+2. Open your browser's extensions management page:
+   - **Chrome:** `chrome://extensions`
+   - **Edge:** `edge://extensions`
+3. Enable **Developer mode** using the toggle in the upper corner.
+4. Click **Load unpacked** and select the project folder.
 
----
+## Usage
 
-## 🚀 دليل الاستخدام (How to Use)
+### Step 1: Export Subscriptions
 
-### أولاً: تصدير قنواتك
-1. افتح صفحة الاشتراكات في يوتيوب: `https://www.youtube.com/feed/channels`
-2. اضغط على أيقونة الإضافة، وتوجه لتبويب **"📥 تصدير قنواتي"**.
-3. اضغط على **"بدء التصدير الشامل"**.
-4. ستقوم الإضافة بالتمرير وجمع القنوات، ثم يبدأ تحميل ملف CSV تلقائياً.
-5. أرسل الملف لصديقك!
+1. Open YouTube and navigate to: `https://www.youtube.com/feed/channels`
+2. Click the extension icon and select the **Export** tab.
+3. Click **Start Export**. The extension will scroll to load all channels and trigger a CSV download once finished.
 
-### ثانياً: استيراد القنوات والاشتراك
-1. يفتح صديقك موقع يوتيوب في المتصفح بحسابه.
-2. يفتح الإضافة ويتوجه لتبويب **"📤 استيراد واشتراك"**.
-3. يسحب ملف الـ CSV ويفلته في المربع المخصص.
-4. تظهر له إحصائية القنوات المشتركة والقنوات الجديدة فوراً.
-5. يمكنه الاشتراك في أي قناة فردياً عبر زر `[➕ اشتراك]`، أو الضغط على زر `[⚡ اشتراك تلقائي في المتبقية]` للاشتراك في كل القنوات تباعاً.
+### Step 2: Import & Subscribe
 
----
+1. In your browser, ensure you are logged into the target YouTube account.
+2. Click the extension icon and select the **Import** tab.
+3. Drag and drop the exported CSV file into the designated area.
+4. The extension will check your current subscriptions and display:
+   - Total channels in the file
+   - Already subscribed channels
+   - Remaining channels to subscribe
+5. Click **Auto-Subscribe Remaining** to subscribe to all new channels in sequence, or use the **Subscribe** button next to specific channels.
 
-## 🏗️ البنية التقنية (Architecture)
+## Technical Notes
 
-```text
-youtube-channel-exporter/
-├── manifest.json         # إعدادات الإضافة (Manifest V3)
-├── LICENSE               # ترخيص MIT مفتوح المصدر
-├── README.md             # دليل المشروع والتوثيق
-├── icons/                # أيقونات الإضافة بدقات 16, 48, 128
-├── popup/
-│   ├── popup.html        # واجهة المستخدم المبسطة
-│   ├── popup.css         # تصميم أنيق وداكن (Dark Mode)
-│   └── popup.js          # التحكم، معالجة CSV، وإدارة الاشتراك
-└── content/
-    ├── content.js        # محرك جمع القنوات والتمرير التلقائي
-    └── page_bridge.js    # جسر التوثيق والتواصل المباشر مع جلسة يوتيوب
-```
+- **Manifest Version:** V3
+- **Authentication:** Uses the browser session's existing credentials (`SAPISIDHASH` and active `SESSION_INDEX`) to authenticate directly against YouTube's internal API endpoints.
+- **Permissions:**
+  - `storage`: Saves local application state and log entries.
+  - `activeTab` / `host_permissions`: Accesses YouTube tabs to read subscriptions and dispatch subscription requests.
+  - `scripting`: Executes session queries in the page context.
 
----
+## License
 
-## 📄 الترخيص (License)
-
-هذا المشروع مرخص تحت رخصة **[MIT License](LICENSE)** - متاح ومجاني للاستخدام والتطوير.
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
