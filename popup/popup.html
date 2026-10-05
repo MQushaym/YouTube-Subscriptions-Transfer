@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مساعد اشتراكات يوتيوب</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-main">
+        <div class="header-brand">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </div>
+          <span class="brand-title">مساعد قنوات يوتيوب</span>
+        </div>
+        <div class="account-pill" id="accountPill" title="الحساب المتصل حالياً بيوتيوب">
+          <span class="account-dot"></span>
+          <span class="account-name" id="activeAccountName">جاري التعرف...</span>
+        </div>
+      </div>
+
+      <!-- Tab Navigation -->
+      <nav class="tab-nav">
+        <button class="tab-btn" id="navTabExport">
+          <span>📥 تصدير قنواتي</span>
+        </button>
+        <button class="tab-btn active" id="navTabImport">
+          <span>📤 استيراد واشتراك</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- ========================================== -->
+      <!-- TAB 1: EXPORT VIEW                         -->
+      <!-- ========================================== -->
+      <section id="tabContentExport" class="tab-pane hidden">
+        <!-- State: Not on YouTube -->
+        <div id="stateNotYoutube" class="state-box hidden">
+          <div class="state-icon">🌐</div>
+          <h3>يوتيوب غير مفتوح</h3>
+          <p>يرجى فتح موقع يوتيوب في المتصفح لاستخدام الإضافة.</p>
+          <button class="btn btn-primary" id="btnGoToChannels">فتح يوتيوب</button>
+        </div>
+
+        <!-- State: Not on /feed/channels -->
+        <div id="stateNotChannels" class="state-box hidden">
+          <div class="state-icon">📋</div>
+          <h3>صفحة الاشتراكات مطلوبة</h3>
+          <p>للتصدير، يجب الانتقال إلى صفحة الاشتراكات الخاصة بحسابك.</p>
+          <button class="btn btn-primary" id="btnNavigateChannels">الانتقال إلى الاشتراكات</button>
+        </div>
+
+        <!-- State: Ready to Export -->
+        <div id="stateReady" class="state-box">
+          <div class="state-icon">📊</div>
+          <h3>جاهز لتصدير القنوات</h3>
+          <p>تم رصد <strong id="initialCount">0</strong> قناة في الصفحة حالياً.</p>
+          <button class="btn btn-primary btn-large" id="btnStartExport">بدء التصدير الشامل</button>
+        </div>
+
+        <!-- State: Exporting (Scrolling) -->
+        <div id="stateExporting" class="state-box hidden">
+          <div class="spinner"></div>
+          <h3>جاري جمع القنوات...</h3>
+          <div class="counter-display">
+            <span id="exportingCount">0</span>
+            <span class="counter-label">قناة تم رصدها</span>
+          </div>
+          <p class="hint-text">يتم التمرير تلقائياً لجمع جميع القنوات من حسابك</p>
+          <button class="btn btn-secondary" id="btnStopExport">إيقاف وحفظ ما تم جمعه</button>
+        </div>
+
+        <!-- State: Completed -->
+        <div id="stateCompleted" class="state-box hidden">
+          <div class="state-icon success-icon">✅</div>
+          <h3>اكتمل التصدير بنجاح!</h3>
+          <div class="counter-display">
+            <span id="finalCount">0</span>
+            <span class="counter-label">إجمالي القنوات المصدرة</span>
+          </div>
+          <div class="action-buttons-group">
+            <button class="btn btn-secondary" id="btnCopyClipboard">
+              <span id="copyBtnText">نسخ القنوات كنص</span>
+            </button>
+            <button class="btn btn-primary" id="btnRedownload">إعادة تحميل ملف CSV</button>
+          </div>
+          <button class="btn-link" id="btnRestart">تصدير من جديد</button>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: IMPORT & SUBSCRIBE VIEW             -->
+      <!-- ========================================== -->
+      <section id="tabContentImport" class="tab-pane">
+        <!-- 1. Dropzone (Initial State) -->
+        <div id="importDropzoneContainer" class="dropzone-wrapper">
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="csvFileInput" accept=".csv" class="file-input-hidden">
+            <div class="dropzone-icon">📁</div>
+            <h3>ارفع ملف قنوات يوتيوب (CSV)</h3>
+            <p>اسحب الملف وأفلته هنا أو اضغط للاختيار</p>
+            <button class="btn btn-primary" id="btnSelectFile">اختيار ملف CSV</button>
+          </div>
+        </div>
+
+        <!-- 2. Import Manager (Active State) -->
+        <div id="importManagerContainer" class="manager-wrapper hidden">
+          <!-- File info bar -->
+          <div class="file-info-bar">
+            <span class="file-badge" id="currentFileName">ملف القنوات</span>
+            <button class="btn-text-action" id="btnChangeFile">تغيير الملف</button>
+          </div>
+
+          <!-- Clean Stats Row (3 Metrics only) -->
+          <div class="stats-row">
+            <div class="stat-card">
+              <span class="stat-number" id="statTotal">0</span>
+              <span class="stat-label">الإجمالي</span>
+            </div>
+            <div class="stat-card mutual">
+              <span class="stat-number" id="statMutual">0</span>
+              <span class="stat-label">مشتركة مسبقاً</span>
+            </div>
+            <div class="stat-card pending">
+              <span class="stat-number" id="statPending">0</span>
+              <span class="stat-label">متبقية للاشتراك</span>
+            </div>
+          </div>
+
+          <!-- Action Controls -->
+          <div class="action-bar">
+            <button class="btn btn-primary btn-auto-sub" id="btnAutoSubscribe">
+              <span class="btn-icon">⚡</span>
+              <span>اشتراك تلقائي في المتبقية (<span id="autoSubCount">0</span>)</span>
+            </button>
+            <button class="btn btn-secondary hidden" id="btnPauseAutoSub">
+              <span>⏸️ إيقاف مؤقت</span>
+            </button>
+            <button class="btn btn-secondary btn-icon-only" id="btnRefreshSubs" title="إعادة فحص اشتراكات الحساب">
+              <span>🔄</span>
+            </button>
+          </div>
+
+          <!-- Batch Progress Bar (Hidden during idle) -->
+          <div class="progress-box hidden" id="progressBox">
+            <div class="progress-text-row">
+              <span id="progressMessage">جاري المعالجة...</span>
+              <span id="progressPercent">0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="progressBar"></div>
+            </div>
+          </div>
+
+          <!-- Search & Filters -->
+          <div class="filter-controls">
+            <div class="search-input-wrapper">
+              <input type="text" id="channelSearchInput" placeholder="بحث باسم القناة..." class="search-input">
+            </div>
+            <div class="filter-pills">
+              <button class="pill-btn active" data-filter="all" id="pillAll">
+                الكل (<span id="countAll">0</span>)
+              </button>
+              <button class="pill-btn" data-filter="pending" id="pillPending">
+                المتبقية (<span id="countPending">0</span>)
+              </button>
+              <button class="pill-btn" data-filter="mutual" id="pillMutual">
+                المشتركة (<span id="countMutual">0</span>)
+              </button>
+            </div>
+          </div>
+
+          <!-- Channels List -->
+          <div class="channels-list" id="channelsList">
+            <!-- Channel cards injected dynamically -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer with Logging Drawer Trigger -->
+    <footer class="app-footer">
+      <button class="btn-logs-trigger" id="btnToggleLogs">
+        <span>📋 سجل العمليات والتشخيص (Logs)</span>
+        <span class="log-count-badge" id="logCountBadge">0</span>
+      </button>
+    </footer>
+
+    <!-- Diagnostic Logs Drawer / Modal -->
+    <div class="logs-drawer hidden" id="logsDrawer">
+      <div class="logs-header">
+        <span class="logs-title">سجل العمليات المباشر (Logs)</span>
+        <div class="logs-actions">
+          <button class="btn-log-action" id="btnCopyLogs" title="نسخ السجل بالكامل للحافظة">📋 نسخ السجل</button>
+          <button class="btn-log-action" id="btnClearLogs" title="مسح السجل">🗑️ مسح</button>
+          <button class="btn-log-action close-btn" id="btnCloseLogs" title="إغلاق">✕</button>
+        </div>
+      </div>
+      <div class="logs-body" id="logsContainer">
+        <!-- Logs appear here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
